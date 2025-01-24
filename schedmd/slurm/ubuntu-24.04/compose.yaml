@@ -22,6 +22,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
   accounting:
     build:
       context: .
@@ -40,6 +41,7 @@ services:
     depends_on:
       database:
         condition: service_started
+
   control-plane:
     build:
       context: .
@@ -58,6 +60,7 @@ services:
     depends_on:
       accounting:
         condition: service_started
+
   compute:
     build:
       context: .
@@ -78,6 +81,7 @@ services:
     depends_on:
       control-plane:
         condition: service_started
+
   restapi:
     build:
       context: .
@@ -98,6 +102,7 @@ services:
     depends_on:
       control-plane:
         condition: service_started
+
   authcred:
     build:
       context: .
@@ -116,11 +121,14 @@ services:
     depends_on:
       control-plane:
         condition: service_started
+
 volumes:
   mariadb_data:
     driver: local
+
 networks:
   default:
     driver: bridge
     driver_opts:
       com.docker.network.bridge.host_binding_ipv4: 127.0.0.1
+
