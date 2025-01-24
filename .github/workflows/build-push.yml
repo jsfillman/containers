@@ -30,13 +30,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Navigate to Build Directory
-        run: cd schedmd/slurm/ubuntu-24.04
+        working-directory: schedmd/slurm/ubuntu-24.04
+        run: |
+          echo "Entered build directory"
 
       - name: Build and Push Images
-        uses: docker/compose-action@v2
+        uses: whoan/docker-compose-build-push@v2.0.0
         with:
-          compose-file: schedmd/slurm/ubuntu-24.04/compose.yaml
-          action: push
-          build: true
+          compose-file: compose.yaml
+          push: true
           platforms: ${{ matrix.platform }}
 
