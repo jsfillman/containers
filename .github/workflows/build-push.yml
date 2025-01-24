@@ -22,11 +22,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USER: ${{ secrets.GHCR_USER }}
-        run: echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
         run: |
@@ -52,11 +53,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USER: ${{ secrets.GHCR_USER }}
-        run: echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Docker Image
         run: |
@@ -82,28 +84,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Verify Login Info
-        run: |
-          if [ -z "$GHCR_TOKEN" ] || [ -z "$GHCR_USER" ]; then
-            echo "Runner lacks login info. Either environment variables are not defined, or runner is on an unprotected branch/tag.";
-            exit 1;
-          fi
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USER: ${{ secrets.GHCR_USER }}
-
-      - name: Log in to GitHub Container Registry
-        run: echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USER: ${{ secrets.GHCR_USER }}
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Release Images
         run: |
           apk update && apk upgrade
           apk add --no-cache bash jq
           for daemon in slurmctld slurmd slurmdbd slurmrestd sackd ; do
-            ./scripts/build.sh --registry=ghcr.io/${{ secrets.GHCR_USER }} --new-registry=ghcr.io/${{ secrets.GHCR_USER }} --target=$daemon --slurm-version=$VERSION --pull --no-build --push ./schedmd/slurm/$FLAVOR ;
+            ./scripts/build.sh --registry=ghcr.io/${{ github.actor }} --new-registry=ghcr.io/${{ github.actor }} --target=$daemon --slurm-version=$VERSION --pull --no-build --push ./schedmd/slurm/$FLAVOR ;
           done
         env:
           VERSION: ${{ matrix.version }}
