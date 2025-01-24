@@ -20,9 +20,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Change Directory to Build Context
-        run: cd schedmd/slurm/ubuntu-24.04
-
       - name: Build and Push
         uses: docker/bake-action@v6
         with:
@@ -30,4 +27,5 @@ jobs:
           push: true
           set: |
             *.tags=ghcr.io/${{ github.repository_owner }}/app:latest
+        working-directory: schedmd/slurm/ubuntu-24.04
 
