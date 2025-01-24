@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-      - "dev"
   workflow_dispatch:
 
 jobs:
@@ -29,15 +28,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Navigate to Build Directory
-        working-directory: schedmd/slurm/ubuntu-24.04
-        run: |
-          echo "Entered build directory"
-
       - name: Build and Push Images
-        uses: 0x4r45h/docker-compose-ci@v0.1.0
+        uses: docker/bake-action@v6
         with:
-          docker_compose_files: '-f compose.yml'
-          platforms: ${{ matrix.platform }}
-
+          source: "{{defaultContext}}:schedmd/slurm/ubuntu-24.04"
+          push: true
+          set: |
+            database.tags=ghcr.io/${{ github.repository_owner }}/mariadb:latest
+            accounting.tags=ghcr.io/${{ github.repository_owner }}/slurmdbd:latest
+            control-plane.tags=ghcr.io/${{ github.repository_owner }}/slurmctld:latest
+            compute.tags=ghcr.io/${{ github.repository_owner }}/slurmd:latest
+            restapi.tags=ghcr.io/${{ github.repository_owner }}/slurmrestd:latest
+            authcred.tags=ghcr.io/${{ github.repository_owner }}/sackd:latest
 

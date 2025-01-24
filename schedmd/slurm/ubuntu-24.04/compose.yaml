@@ -27,6 +27,7 @@ services:
     build:
       context: .
       target: slurmdbd
+    image: slurmdbd:latest
     container_name: slurmdbd
     hostname: slurmdbd
     entrypoint: /opt/entrypoint/slurmdbd.sh
@@ -46,6 +47,7 @@ services:
     build:
       context: .
       target: slurmctld
+    image: slurmctld:latest
     container_name: slurmctld
     hostname: slurmctld
     entrypoint: /opt/entrypoint/slurmctld.sh
@@ -65,6 +67,7 @@ services:
     build:
       context: .
       target: slurmd
+    image: slurmd:latest
     container_name: slurmd
     hostname: slurmd
     environment:
@@ -86,6 +89,7 @@ services:
     build:
       context: .
       target: slurmrestd
+    image: slurmrestd:latest
     container_name: slurmrestd
     hostname: slurmrestd
     environment:
@@ -107,6 +111,7 @@ services:
     build:
       context: .
       target: sackd
+    image: sackd:latest
     container_name: sackd
     hostname: sackd
     environment:
